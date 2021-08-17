@@ -14,10 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.camilobaquero.mytaxitest.data.FleetTypeEnum
 import com.camilobaquero.mytaxitest.data.VehicleModel
+import com.camilobaquero.mytaxitest.util.Constants
 
 
 @Composable
@@ -47,25 +48,31 @@ fun CarsList(
 @Composable
 fun CarListItem(vehicle: VehicleModel) {
     Row(verticalAlignment = Alignment.CenterVertically) {
+
+        val image = when (vehicle.fleetType) {
+            FleetTypeEnum.POOLING -> Constants.POOL_IMAGE_URL
+            FleetTypeEnum.TAXI -> Constants.TAXI_IMAGE_URL
+        }
+
         Image(
-            painter = rememberImagePainter(vehicle.url),
+            painter = rememberImagePainter(image),
             contentDescription = null,
             modifier = Modifier.size(50.dp)
         )
+
         Column {
-            Text(text = vehicle.name, style = MaterialTheme.typography.subtitle1)
-            Text(text = vehicle.name)
+            Text(text = "Title", style = MaterialTheme.typography.subtitle1)
+            Text(text = "Subtitle")
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    CarListItem(
-        vehicle = VehicleModel(
-            name = "Carro 1",
-            "https://p.kindpng.com/picc/s/179-1793936_clip-art-carro-de-cor-carro-png-transparent.png"
-        )
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    CarListItem(
+//        vehicle = VehicleModel(
+//
+//        )
+//    )
+//}

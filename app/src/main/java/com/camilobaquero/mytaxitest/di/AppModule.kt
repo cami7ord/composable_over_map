@@ -4,6 +4,7 @@ import com.camilobaquero.mytaxitest.BuildConfig
 import com.camilobaquero.mytaxitest.api.ApiHelper
 import com.camilobaquero.mytaxitest.api.ApiHelperImpl
 import com.camilobaquero.mytaxitest.api.ApiService
+import com.camilobaquero.mytaxitest.util.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +19,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    fun provideBaseUrl() = Constants.BASE_URL
 
     @Singleton
     @Provides
@@ -35,9 +39,9 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient, BASE_URL: String): Retrofit = Retrofit.Builder()
+    fun provideRetrofit(okHttpClient: OkHttpClient, baseUrl: String): Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl(baseUrl)
         .client(okHttpClient)
         .build()
 
