@@ -1,21 +1,25 @@
 package com.camilobaquero.mytaxitest
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.platform.ComposeView
+import com.camilobaquero.mytaxitest.data.VehicleModel
+import com.camilobaquero.mytaxitest.databinding.ActivityMapsBinding
+import com.camilobaquero.mytaxitest.ui.components.CarsList
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.camilobaquero.mytaxitest.databinding.ActivityMapsBinding
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
 
+    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,6 +30,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        // Cars list
+        val carsList = findViewById<ComposeView>(R.id.carsList)
+        carsList.setContent {
+            CarsList(
+                cars = listOf(
+                    VehicleModel(
+                        "Vehicle 1",
+                        "https://p.kindpng.com/picc/s/179-1793936_clip-art-carro-de-cor-carro-png-transparent.png"
+                    ),
+                    VehicleModel(
+                        "Vehicle 2",
+                        "https://p.kindpng.com/picc/s/179-1793936_clip-art-carro-de-cor-carro-png-transparent.png"
+                    ),
+                    VehicleModel(
+                        "Vehicle 3",
+                        "https://p.kindpng.com/picc/s/179-1793936_clip-art-carro-de-cor-carro-png-transparent.png"
+                    ),
+                )
+            )
+        }
     }
 
     /**
