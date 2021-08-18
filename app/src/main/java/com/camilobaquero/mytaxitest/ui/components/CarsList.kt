@@ -14,9 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.camilobaquero.mytaxitest.R
 import com.camilobaquero.mytaxitest.data.FleetTypeEnum
+import com.camilobaquero.mytaxitest.data.LocationDirectionEnum
+import com.camilobaquero.mytaxitest.data.LocationDirectionEnum.*
 import com.camilobaquero.mytaxitest.data.VehicleModel
 import com.camilobaquero.mytaxitest.util.Constants
 
@@ -60,10 +64,39 @@ fun CarListItem(vehicle: VehicleModel) {
             modifier = Modifier.size(50.dp)
         )
 
-        Column {
-            Text(text = "Title", style = MaterialTheme.typography.subtitle1)
-            Text(text = "Subtitle")
+        Spacer(Modifier.width(16.dp))
+
+        val locationDirectionResource = when (computeDirection(vehicle.heading)) {
+            UNKNOWN -> stringResource(id = R.string.unknown)
+            NORTH -> stringResource(id = R.string.north)
+            NORTH_EAST -> stringResource(id = R.string.north_east)
+            EAST -> stringResource(id = R.string.east)
+            SOUTH_EAST -> stringResource(id = R.string.south_east)
+            SOUTH -> stringResource(id = R.string.south)
+            SOUTH_WEST -> stringResource(id = R.string.south_west)
+            WEST -> stringResource(id = R.string.west)
+            NORTH_WEST -> stringResource(id = R.string.north_west)
         }
+
+        Column {
+            Text(text = vehicle.id.toString(), style = MaterialTheme.typography.subtitle1)
+            Text(text = stringResource(R.string.heading_to, locationDirectionResource))
+        }
+    }
+}
+
+private fun computeDirection(heading: Double): LocationDirectionEnum {
+    val delta = 22.5
+    return when {
+        ((heading >= 0 && heading < delta) || (heading < 0 && heading >= -delta)) -> NORTH
+        (heading >= delta && heading < 90 - delta) -> NORTH_EAST
+        (heading >= 90 - delta && heading < 90 + delta) -> EAST
+        (heading >= 90 + delta && heading < 180 - delta) -> SOUTH_EAST
+        (heading >= 180 - delta || heading <= -180 + delta) -> SOUTH
+        (heading >= -180 + delta && heading < -90 - delta) -> SOUTH_WEST
+        (heading >= -90 - delta && heading < -90 + delta) -> WEST
+        (heading >= -90 + delta && heading < -delta) -> NORTH_WEST
+        else -> UNKNOWN
     }
 }
 

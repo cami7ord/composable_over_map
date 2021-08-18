@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">MyTaxiTest</string>
     <string name="title_activity_maps">MapsActivity</string>
-    <string name="title_activity_main2">MainActivity2</string>
+    <string name="heading_to">Heading %1$s</string>
+    <string name="north">north</string>
+    <string name="north_east">north-east</string>
+    <string name="east">east</string>
+    <string name="south_east">south-east</string>
+    <string name="south">south</string>
+    <string name="south_west">south-west</string>
+    <string name="west">west</string>
+    <string name="north_west">north-west</string>
+    <string name="unknown">to oblivion</string>
 </resources>

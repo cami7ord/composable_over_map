@@ -1,6 +1,5 @@
 package com.camilobaquero.mytaxitest.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +24,6 @@ class MainViewModel @Inject constructor(
 
     private fun getVehicles() = viewModelScope.launch {
         vehiclesRepository.getVehicles().let {
-            Log.e("CAMILO", "Response: ${it.raw().body}")
             it.body()?.data?.let { vehiclesList ->
                 _vehicles.postValue(vehiclesList)
             }

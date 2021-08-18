@@ -6,16 +6,21 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.platform.ComposeView
+import com.camilobaquero.mytaxitest.data.FleetTypeEnum
 import com.camilobaquero.mytaxitest.databinding.ActivityMapsBinding
 import com.camilobaquero.mytaxitest.ui.MainViewModel
 import com.camilobaquero.mytaxitest.ui.components.CarsList
+import com.camilobaquero.mytaxitest.util.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -24,6 +29,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
 
     private val mainViewModel: MainViewModel by viewModels()
+    private var isMapReady: Boolean = false
+
+    private val markerColorAzure by lazy {
+        BitmapDescriptorFactory
+            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+    }
+
+    private val markerColorYellow by lazy {
+        BitmapDescriptorFactory
+            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)
+    }
 
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +60,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.e("List", it.toString())
             carsList.setContent {
                 CarsList(
-                    cars = it
+                    cars = it.subList(0, 4)
                 )
+            }
+            if (isMapReady) {
+                it.forEach { vehicle ->
+                    val markerColor = when (vehicle.fleetType) {
+                        FleetTypeEnum.POOLING -> markerColorAzure
+                        FleetTypeEnum.TAXI -> markerColorYellow
+                    }
+                    mMap.addMarker(
+                        MarkerOptions().position(
+                            LatLng(vehicle.coordinate.latitude, vehicle.coordinate.longitude)
+                        ).title(vehicle.id.toString()).icon(markerColor)
+                    )
+                }
             }
         }
     }
@@ -53,15 +82,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        isMapReady = true
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val hamburg = LatLngBounds(
+            LatLng(Constants.P2LAT, Constants.P1LON),
+            LatLng(Constants.P1LAT, Constants.P2LON)
+        )
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(hamburg, 8))
     }
 }
