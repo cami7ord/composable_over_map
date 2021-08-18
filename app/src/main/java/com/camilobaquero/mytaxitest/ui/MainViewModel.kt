@@ -1,5 +1,6 @@
 package com.camilobaquero.mytaxitest.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,6 +29,10 @@ class MainViewModel @Inject constructor(
                 _vehicles.postValue(vehiclesList)
             }
         }
+    }
+
+    fun onVehicleSelected(vehicle: VehicleModel) {
+        Log.e("CAMILO", "Vehicle selected $vehicle")
     }
 
 }

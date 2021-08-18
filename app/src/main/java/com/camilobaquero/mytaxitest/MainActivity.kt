@@ -1,7 +1,6 @@
 package com.camilobaquero.mytaxitest
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
@@ -57,10 +56,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val carsList = findViewById<ComposeView>(R.id.carsList)
 
         mainViewModel.vehicles.observe(this) {
-            Log.e("List", it.toString())
             carsList.setContent {
                 CarsList(
-                    cars = it.subList(0, 4)
+                    cars = it.subList(0, 4),
+                    onCarSelected = { car -> mainViewModel.onVehicleSelected(car) }
                 )
             }
             if (isMapReady) {
