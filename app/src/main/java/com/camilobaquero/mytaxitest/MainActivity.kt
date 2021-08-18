@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Cars list
+        // Cars list composable
         val carsList = findViewById<ComposeView>(R.id.carsList)
 
         mainViewModel.vehicles.observe(this) {
@@ -72,6 +72,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         MarkerOptions().position(
                             LatLng(vehicle.coordinate.latitude, vehicle.coordinate.longitude)
                         ).title(vehicle.id.toString()).icon(markerColor)
+                    )
+                }
+            }
+        }
+
+        mainViewModel.selectedVehicle.observe(this) { vehicleModel ->
+            vehicleModel?.let {
+                if (isMapReady) {
+                    mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            LatLng(
+                                vehicleModel.coordinate.latitude,
+                                vehicleModel.coordinate.longitude
+                            ),
+                            15f
+                        )
                     )
                 }
             }
