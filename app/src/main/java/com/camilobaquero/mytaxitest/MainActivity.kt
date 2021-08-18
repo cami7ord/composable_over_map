@@ -89,6 +89,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera.
+     */
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        isMapReady = true
+
+        val hamburg = LatLngBounds(
+            LatLng(Constants.P2LAT, Constants.P1LON),
+            LatLng(Constants.P1LAT, Constants.P2LON)
+        )
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(hamburg, 8))
+
+        mMap.setOnMapClickListener {
+            mainViewModel.onMapClicked()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.list_menu, menu)
@@ -124,21 +144,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 15f
             )
         )
-    }
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
-     */
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        isMapReady = true
-
-        val hamburg = LatLngBounds(
-            LatLng(Constants.P2LAT, Constants.P1LON),
-            LatLng(Constants.P1LAT, Constants.P2LON)
-        )
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(hamburg, 8))
     }
 }
