@@ -11,4 +11,5 @@
     <string name="west">west</string>
     <string name="north_west">north-west</string>
     <string name="unknown">to oblivion</string>
+    <string name="action_show_list">Show list</string>
 </resources>

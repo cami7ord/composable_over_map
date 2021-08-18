@@ -1,5 +1,7 @@
 package com.camilobaquero.mytaxitest.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.camilobaquero.mytaxitest.data.VehicleModel
 import com.camilobaquero.mytaxitest.ui.MainViewModel
 
+@ExperimentalAnimationApi
 @Composable
 fun CarsList(
     mainViewModel: MainViewModel
@@ -28,18 +31,23 @@ fun CarsList(
     ) {
         val listState = rememberLazyListState()
         val cars: List<VehicleModel> by mainViewModel.vehicles.observeAsState(emptyList())
+        val visible: Boolean by mainViewModel.listVisibility.observeAsState(false)
 
-        LazyColumn(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .background(Color.White), state = listState
+        AnimatedVisibility(
+            visible = visible
         ) {
-            items(cars) { car ->
-                CarListItem(
-                    car = car,
-                    onCarSelected = { vehicle -> mainViewModel.onVehicleSelected(vehicle) }
-                )
+            LazyColumn(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .background(Color.White), state = listState
+            ) {
+                items(cars) { car ->
+                    CarListItem(
+                        car = car,
+                        onCarSelected = { vehicle -> mainViewModel.onVehicleSelected(vehicle) }
+                    )
+                }
             }
         }
     }

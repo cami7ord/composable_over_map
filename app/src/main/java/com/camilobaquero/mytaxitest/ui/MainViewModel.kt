@@ -2,6 +2,7 @@ package com.camilobaquero.mytaxitest.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.camilobaquero.mytaxitest.data.VehicleModel
@@ -21,6 +22,10 @@ class MainViewModel @Inject constructor(
     private val _selectedVehicle = MutableLiveData<VehicleModel?>()
     val selectedVehicle: LiveData<VehicleModel?> = _selectedVehicle
 
+    val listVisibility: LiveData<Boolean> = map(selectedVehicle) { selectedVehicle ->
+        selectedVehicle == null
+    }
+
     init {
         getVehicles()
     }
@@ -29,12 +34,17 @@ class MainViewModel @Inject constructor(
         vehiclesRepository.getVehicles().let {
             it.body()?.data?.let { vehiclesList ->
                 _vehicles.postValue(vehiclesList)
+                _selectedVehicle.postValue(null)
             }
         }
     }
 
     fun onVehicleSelected(vehicle: VehicleModel) {
         _selectedVehicle.postValue(vehicle)
+    }
+
+    fun onShowListClicked() {
+        _selectedVehicle.postValue(null)
     }
 
 }
