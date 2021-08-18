@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.platform.ComposeView
 import com.camilobaquero.mytaxitest.data.FleetTypeEnum
+import com.camilobaquero.mytaxitest.data.VehicleModel
 import com.camilobaquero.mytaxitest.databinding.ActivityMapsBinding
 import com.camilobaquero.mytaxitest.ui.MainViewModel
 import com.camilobaquero.mytaxitest.ui.components.CarsList
@@ -19,7 +20,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -54,25 +54,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Cars list composable
         val carsList = findViewById<ComposeView>(R.id.carsList)
+        carsList.setContent {
+            CarsList(mainViewModel)
+        }
 
-        mainViewModel.vehicles.observe(this) {
-            carsList.setContent {
-                CarsList(
-                    cars = it.subList(0, 4),
-                    onCarSelected = { car -> mainViewModel.onVehicleSelected(car) }
-                )
-            }
-            if (isMapReady) {
-                it.forEach { vehicle ->
-                    val markerColor = when (vehicle.fleetType) {
-                        FleetTypeEnum.POOLING -> markerColorAzure
-                        FleetTypeEnum.TAXI -> markerColorYellow
+        // Observers
+        mainViewModel.vehicles.observe(this) { list ->
+            list?.let {
+                if (isMapReady) {
+                    it.forEach { vehicle ->
+                        addVehicleMarkerToMap(vehicle)
                     }
-                    mMap.addMarker(
-                        MarkerOptions().position(
-                            LatLng(vehicle.coordinate.latitude, vehicle.coordinate.longitude)
-                        ).title(vehicle.id.toString()).icon(markerColor)
-                    )
                 }
             }
         }
@@ -80,18 +72,34 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mainViewModel.selectedVehicle.observe(this) { vehicleModel ->
             vehicleModel?.let {
                 if (isMapReady) {
-                    mMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            LatLng(
-                                vehicleModel.coordinate.latitude,
-                                vehicleModel.coordinate.longitude
-                            ),
-                            15f
-                        )
-                    )
+                    animateCameraToSelectedVehicle(vehicleModel)
                 }
             }
         }
+    }
+
+    private fun addVehicleMarkerToMap(vehicle: VehicleModel) {
+        val markerColor = when (vehicle.fleetType) {
+            FleetTypeEnum.POOLING -> markerColorAzure
+            FleetTypeEnum.TAXI -> markerColorYellow
+        }
+        mMap.addMarker(
+            MarkerOptions().position(
+                LatLng(vehicle.coordinate.latitude, vehicle.coordinate.longitude)
+            ).title(vehicle.id.toString()).icon(markerColor)
+        )
+    }
+
+    private fun animateCameraToSelectedVehicle(vehicle: VehicleModel) {
+        val markerColor = when (vehicle.fleetType) {
+            FleetTypeEnum.POOLING -> markerColorAzure
+            FleetTypeEnum.TAXI -> markerColorYellow
+        }
+        mMap.addMarker(
+            MarkerOptions().position(
+                LatLng(vehicle.coordinate.latitude, vehicle.coordinate.longitude)
+            ).title(vehicle.id.toString()).icon(markerColor)
+        )
     }
 
     /**

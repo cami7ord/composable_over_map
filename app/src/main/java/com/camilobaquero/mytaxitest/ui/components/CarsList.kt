@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -17,8 +19,7 @@ import com.camilobaquero.mytaxitest.ui.MainViewModel
 
 @Composable
 fun CarsList(
-    cars: List<VehicleModel>,
-    onCarSelected: (VehicleModel) -> Unit
+    mainViewModel: MainViewModel
 ) {
     Card(
         elevation = 10.dp,
@@ -26,6 +27,7 @@ fun CarsList(
         modifier = Modifier.fillMaxWidth()
     ) {
         val listState = rememberLazyListState()
+        val cars: List<VehicleModel> by mainViewModel.vehicles.observeAsState(emptyList())
 
         LazyColumn(
             Modifier
@@ -36,7 +38,7 @@ fun CarsList(
             items(cars) { car ->
                 CarListItem(
                     car = car,
-                    onCarSelected = { vehicle -> onCarSelected(vehicle) }
+                    onCarSelected = { vehicle -> mainViewModel.onVehicleSelected(vehicle) }
                 )
             }
         }
